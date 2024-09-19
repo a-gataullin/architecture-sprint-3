@@ -1,0 +1,9 @@
+@startuml c2
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Container(modules, "Управление устройствами", "Клиент умного дома")
+Container(devicesApiGateway, "API Gateway", "api девайсов")
+
+
+
+@enduml
