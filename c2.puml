@@ -1,9 +1,66 @@
 @startuml c2
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-Container(modules, "Управление устройствами", "Клиент умного дома")
-Container(devicesApiGateway, "API Gateway", "api девайсов")
+' External
+Container_Ext(web, "Web Client", "Внешний веб-клиент, предоставляющий интерфейс для пользователя")
+Container_Ext(extDevices, "Devices", "Датчики и модули управления климатом, освещением, ...")
 
+' Devices Management
+Boundary(devicesManagement, "Devices Management") {
+    Container(clientsApi, "Clients API Gateway", "", "Точка входа для внешних клиентов")
 
+    Container(settings, "DevicesSettings", "", "Микросервис настроек пользователя")
+    ContainerDb(settingsDB, "DevicesSettingsDB", "PostgreSQL", "Хранит настройки пользователя для каждого модуля")
+
+    Container(measures, "DevicesRecentMeasures")
+    ContainerDb(measuresDB, "DevicesRecentMeasuresDB", "Sharded Redis", "Хранит актуальные показатели для каждого модуля")
+
+    ContainerQueue(measuresQueue, "RecentMeasuresQueue", "Kafka", "Очередь на отправку настройки на модуль")
+    Container(setter, "DevicesMeasureSetter", "", "Микросервис, отвечающий за отправку настроек на модуль")
+
+    ContainerQueue(settingsQueue, "SettingsQueue", "Kafka", "Очередь полученных показателей с модулей")
+    Container(collector, "DevicesMeasuresCollector", "", "Микросервис, отвечающий за получение настроек с модуля")
+    
+    Container(devicesApi, "Devices API Gateway", "", "Интерфейс взаймодействия с модулями")
+}
+
+' Telemetry
+Boundary(telemetryManagement, "Telemetry") {
+    Container(telemetry, "TelemetryService", "", "Микросервис, отвечающий за телеметрию")
+    ContainerDb(telemetryDB, "TelemetryDB", "InfluxDB", "Хранит показатели с датчиков")
+}
+
+' Users-Houses management
+Boundary(usersHousesManagement, "Users-Houses management") {
+    Container(usersHouses, "UsersHouses")
+    ContainerDb(usersHousesDB, "UsersHouses", "PostgreSQL", "Хранит информацию о пользователях, их домах и девайсах")
+}
+
+' Authorization
+Rel(web, clientsApi, "Отправляет запрос")
+Rel(clientsApi, usersHouses, "Авторизует пользователя, валидирует")
+Rel(usersHouses, usersHousesDB, "Получает пользователя, его дома и зарегистрированные девайсы")
+
+' Setting a new value for measure
+Rel(clientsApi, settings, "Сохраняет новую настройку")
+Rel(settings, settingsDB, "Сохраняет настройку для модуля")
+Rel(settings, settingsQueue, "Ставит задачу на отправку настройки")
+Rel(settingsQueue, setter, "Забирает задачу на отправку настройки")
+Rel(setter, devicesApi, "Отправляет настройку")
+
+Rel(measuresQueue, settings, "Проверяет текущее значение модуля")
+
+' Getting a measure
+Rel(clientsApi, measures, "Получает текущие показатели модулей")
+Rel(measures, measuresDB, "Сохраняет/Получает текущие показатели модулей")
+Rel(measuresQueue, measures, "Сохраняет текущие показатели модулей")
+Rel(collector, measuresQueue, "Публикует текущее значение показателя модуля")
+Rel(collector, devicesApi, "Получает текущеее значение")
+Rel(devicesApi, extDevices, "Отправляет/Получает показатели")
+
+' Telemetry
+Rel(clientsApi, telemetry, "Получает историю показателей за период")
+Rel(measuresQueue, telemetry, "Сохраняет показатели")
+Rel(telemetry, telemetryDB, "Сохраняет показатели/\nПолучает историю показателей за период")
 
 @enduml
