@@ -15,10 +15,10 @@ Boundary(devicesManagement, "Devices Management") {
     Container(measures, "DevicesRecentMeasures")
     ContainerDb(measuresDB, "DevicesRecentMeasuresDB", "Sharded Redis", "Хранит актуальные показатели для каждого модуля")
 
-    ContainerQueue(measuresQueue, "RecentMeasuresQueue", "Kafka", "Очередь на отправку настройки на модуль")
+    ContainerQueue(settingsQueue, "SettingsQueue", "Kafka", "Очередь на отправку настройки на модуль")
     Container(setter, "DevicesMeasureSetter", "", "Микросервис, отвечающий за отправку настроек на модуль")
 
-    ContainerQueue(settingsQueue, "SettingsQueue", "Kafka", "Очередь полученных показателей с модулей")
+    ContainerQueue(measuresQueue, "RecentMeasuresQueue", "Kafka", "Очередь полученных показателей с модулей")
     Container(collector, "DevicesMeasuresCollector", "", "Микросервис, отвечающий за получение настроек с модуля")
     
     Container(devicesApi, "Devices API Gateway", "", "Интерфейс взаймодействия с модулями")

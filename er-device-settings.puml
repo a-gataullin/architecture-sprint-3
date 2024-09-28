@@ -1,0 +1,56 @@
+@startuml er-devices-settings
+title Device Settings ER-diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+entity User {
+  * user_id : UUID <<PK>>
+  --
+  name : varchar
+}
+
+entity Device {
+  * device_id : UUID <<PK>>
+  --
+  name : varchar
+}
+
+entity Setting {
+  * setting_id : UUID <<PK>>
+  device_id : UUID <<FK>>
+  measure_id : UUID <<FK>>
+  --
+  name : varchar
+  measure_value : varchar
+  schedule_id : UUID <<FK>>
+  owner_id : UUID <<FK>>
+}
+
+entity Measure {
+    * measure_id : UUID <<PK>>
+    --
+    name : varchar
+    description : varchar
+    possible_values : varchar[]
+}
+
+entity Schedule {
+    * schedule_id : UUID 
+    --
+    name : varchar
+    description : varchar
+    start_time : time
+    end_time time
+    days : varchar[]
+    owner_id : UUID
+}
+
+User ||--o{ Setting : "has"
+Setting ||--|| Device : "has"
+Setting ||--o| Schedule : "has"
+Setting ||--|| Measure : "has"
+User ||--o{ Schedule : "has"
+
+@enduml

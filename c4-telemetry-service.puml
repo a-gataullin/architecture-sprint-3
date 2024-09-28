@@ -1,0 +1,92 @@
+@startuml c4-devices-settings
+title FitLife Membership Management Code Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+class User {
+  +String id 
+  +String name
+  +List<Settings> settings
+  +void addSeting()
+}
+
+User "1" -- "0..*" Setting : has
+
+class Setting {
+  +String id
+  +String deviceID
+  +String measureName
+  +String measureValue
+  +Schedule schedule
+  +void repeatOnDays()
+}
+
+Setting "1" -- "0..*" Schedule : includes
+
+class Schedule {
+  +String id
+  +Time startTime
+  +Time endTime
+  +List<Day> days
+  +void setDays()
+}
+
+class SetMeasureRequest {
+  +User author
+  +List<Setting> settings
+}
+
+SetMeasureController --> SetMeasureRequest : handles
+
+class SetMeasureController {
+  +WebContext _context
+  -SettingsService service
+  +Error handleRequest()
+}
+
+SetMeasureController "1" -- "1" SettingsService : uses
+
+class SettingsService {
+  -SettingsRepository settingsRepository
+  -QueueAdapter settingsQueue
+  -QueueAdapter recentMeasuresQueue
+  +Error setMeasure()
+  +Error processRecentMeasure()
+}
+
+SettingsService "1" -- "1" SettingsRepository : uses
+SettingsService "1" -- "1" QueueAdapter : uses
+
+class SettingsRepository {
+  -PostgreConnection connection
+}
+
+class QueueAdapter {
+  -KafkaConnection connection
+  -String topic
+  +List<Task> getTasks()
+  +Error sendTasks()
+}
+
+abstract class Task {
+  +TaskContext context
+  +Time ttl
+  +Time createdAt
+}
+
+class RecentMeasureTask extends Task {
+  +String deviceID
+  +String measureName
+  +String measureValue
+  +Time measuredAt
+}
+
+class SetMeasureTask extends Task {
+  +String deviceID
+  +String measureName
+  +String measureValue
+}
+
+@enduml

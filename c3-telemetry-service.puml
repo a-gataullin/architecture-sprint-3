@@ -1,0 +1,24 @@
+@startuml c3-telemetry-service
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(telemetryServiceBoundary, "telemetryService") {
+    Component(getHistoryController, "GetHistoryController")
+    Component(telemetryService, "TelemetryService")
+    Component(telemetryRepository, "TelemetryRepository")
+    Component(measuresQueueAdapter, "MasuresQueueAdapter")
+}   
+
+Container(clientsApi, "Clients API Gateway", "", "Точка входа для внешних клиентов")
+ContainerDb(telemetryDB, "TelemetryDB", "InfluxDB", "Хранит показатели с датчиков")
+ContainerQueue(measuresQueue, "RecentMeasuresQueue", "Kafka", "Очередь полученных показателей с модулей")
+
+Rel(clientsApi, getHistoryController, "Отправляет запрос")    
+Rel(getHistoryController, telemetryService, "Использует")    
+
+Rel(telemetryService, telemetryRepository, "Использует")
+Rel(telemetryRepository, telemetryDB, "Записывает настройки модуля")
+
+Rel(telemetryService, measuresQueueAdapter, "Использует")
+Rel(measuresQueueAdapter, measuresQueue, "Получает задачу")
+
+@enduml
