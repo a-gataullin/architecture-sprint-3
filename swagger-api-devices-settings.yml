@@ -1,0 +1,126 @@
+openapi: '3.0.2'
+info:
+  title: Device Settings API
+  version: '1.0'
+servers:
+  - url: https://api.devices.settings/v1
+paths:
+  /{device_id}/:
+    post:
+      summary: Adds a new setting
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                device_id:
+                  type: string
+                measure_id:
+                  type: string
+                measure_value:
+                  type: string
+                setting_name:
+                  type: string   
+      responses:
+        '200':
+          description: Setting created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  setting_id:
+                    type: string 
+        '403':
+          description: User has no access for the device.
+        '500':
+          description: Internal Error.
+    get:
+      summary: Gets device settings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:    
+                  device_id:
+                    type: integer
+                  owner_only:
+                    type: boolean
+      responses:
+         '200':
+          description: Device's settings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:    
+                    setting_id:
+                      type: integer
+                    measure_name:
+                      type: string
+                    measure_value:
+                      type: string
+                    schedule:
+                      type: string
+                    owner_name:
+                      type: string
+         '403':
+          description: User has no access to device
+         '500':
+          description: Internal Error
+    put:
+      summary: Updates an user setting
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                schedule_id:
+                  type: string
+      responses:
+         '200':
+          description: OK
+         '403':
+          description: User has no access to device
+         '500':
+          description: Internal Error
+  /schedules/:
+    post:
+      summary: Adds a new schedule
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: integer
+                description:
+                  type: string
+                start_time: 
+                  type: string
+                end_time: 
+                  type: string
+                days: 
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Schedule Added.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  schedule_id: 
+                    type: string
