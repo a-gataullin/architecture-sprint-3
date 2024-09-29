@@ -1,5 +1,5 @@
-@startuml c4-devices-settings
-title FitLife Membership Management Code Diagram
+@startuml c4-telemetry-service
+title Telemetry Service
 
 top to bottom direction
 
