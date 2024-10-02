@@ -51,7 +51,7 @@
 
 ### Подзадание 1.3: ER-диаграмма
 Составлены диаграммы для сервиса настроек показателей и системы управления пользователями, домами.
-Файлы: [er-devices-settings.puml](c4-devices-settings.puml), [er-users-houses.puml](c4-telemetry-service.puml).
+Файлы: [er-devices-settings.puml](er-devices-settings.puml), [er-users-houses.puml](er-telemetry-service.puml).
 
 ### Подзадание 1.4: Создание и документирование API
 Составлено API для основного взаймодествия с сервисом настроек показателей:     
