@@ -1,0 +1,62 @@
+asyncapi: 3.0.0
+info:
+  title: Devices Settings Service
+  version: 1.0.0
+  description: This service is in charge of processing device settings
+channels:
+  measureSet:
+    description: This channel contains messages for settings to set by subsequent services.
+    address: measures/set
+    messages:
+      MeasureSet:
+        $ref: '#/components/messages/MeasureSet'
+  recentMeasures:
+    description: This channel contains messages that include recent values that were measured on the device.
+    address: recentMeasures/get
+    messages:
+      RecentMeasure:
+        $ref: '#/components/messages/RecentMeasure'
+operations:
+  setMeasure:
+    action: send
+    channel:
+      $ref: '#/channels/measureSet'
+    messages:
+      - $ref: '#/channels/measureSet/messages/MeasureSet'
+  getMeasure:
+      action: receive
+      channel:
+        $ref: '#/channels/recentMeasures'
+      messages:
+      - $ref: '#/channels/recentMeasures/messages/RecentMeasure'
+
+components:
+  messages:
+    MeasureSet:
+      payload:
+        type: object
+        properties:
+          deviceID:
+            type: string
+          measureID:
+            type: string
+          measureValue:
+            type: string
+          createdAt:
+            type: string
+            format: date-time
+          ttl:
+            type: string
+    RecentMeasure:
+      payload:
+        type: object
+        properties:
+          deviceID:
+            type: string
+          measureID:
+            type: string
+          measureValue:
+            type: string
+          measuredAT:
+            type: string
+            format: date-time

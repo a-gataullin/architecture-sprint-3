@@ -1,0 +1,38 @@
+@startuml er-users-houses
+title Users-Houses ER-diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+entity User {
+  * user_id : UUID <<PK>>
+  --
+  name : varchar
+  email : varchar
+  phone_number : varchar
+  birth : timestamp
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity House {
+  * house_id : UUID <<PK>>
+  --
+  address : varchar
+  rooms_num : integer
+  owner_id : UUID <<FK>>
+}
+
+entity Device {
+  * device_id : UUID <<PK>>
+  house_id : UUID <<FK>>
+  --
+  device_type : varchar
+  status : varchar
+}
+
+User ||--o{ House : "has"
+House ||--o{ Device : "has"
+
+@enduml

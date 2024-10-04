@@ -1,0 +1,29 @@
+@startuml c3-devices-settings
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(devicesSettingsBoundary, "DevicesSettings") {
+    Component(setMeasureController, "SetMeasureController")
+    Component(settingsService, "SettingsService")
+    Component(settingsRepository, "SettingsRepository")
+    Component(settingsQueueAdapter, "SettingsQueueAdapter")
+    Component(measuresQueueAdapter, "MasuresQueueAdapter")
+}
+
+Container(clientsApi, "Clients API Gateway", "", "Точка входа для внешних клиентов")
+ContainerDb(DevicesSettingsDB, "DevicesSettingsDB", "PostgreSQL", "Хранит настройки пользователя для каждого модуля")
+ContainerQueue(settingsQueue, "SettingsQueue", "Kafka", "Очередь на отправку настройки на модуль")
+ContainerQueue(measuresQueue, "RecentMeasuresQueue", "Kafka", "Очередь полученных показателей с модулей")
+
+Rel(clientsApi, setMeasureController, "Отправляет запрос")    
+Rel(setMeasureController, settingsService, "Использует")    
+
+Rel(settingsService, settingsRepository, "Использует")
+Rel(settingsRepository, DevicesSettingsDB, "Записывает настройки модуля")
+
+Rel(settingsService, settingsQueueAdapter, "Использует")
+Rel(settingsQueueAdapter, settingsQueue, "Отправляет задачу")
+
+Rel(settingsService, measuresQueueAdapter, "Использует")
+Rel(measuresQueueAdapter, measuresQueue, "Получает задачу")
+
+@enduml

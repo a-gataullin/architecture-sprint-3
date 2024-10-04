@@ -1,0 +1,11 @@
+@startuml c1
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "Пользователь", "Клиент умного дома")
+System_Ext(modules, "Датчики", "Модули для управления умным домом")
+System(system, "Экосистема умных поселков", "Приложение управления умным домом")
+
+Rel(user, system, "Управляет состоянием дома", "включает отопление, открывает ворота, ..")
+Rel(system, modules, "Контролирует целевые показатели", "температура, освещение, ...")
+
+@enduml
