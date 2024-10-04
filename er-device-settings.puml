@@ -20,20 +20,12 @@ entity Device {
 entity Setting {
   * setting_id : UUID <<PK>>
   device_id : UUID <<FK>>
-  measure_id : UUID <<FK>>
   --
-  name : varchar
+  setting_name : varchar
+  measure_name : varchar
   measure_value : varchar
   schedule_id : UUID <<FK>>
   owner_id : UUID <<FK>>
-}
-
-entity Measure {
-    * measure_id : UUID <<PK>>
-    --
-    name : varchar
-    description : varchar
-    possible_values : varchar[]
 }
 
 entity Schedule {
@@ -50,7 +42,6 @@ entity Schedule {
 User ||--o{ Setting : "has"
 Setting ||--|| Device : "has"
 Setting ||--o| Schedule : "has"
-Setting ||--|| Measure : "has"
 User ||--o{ Schedule : "has"
 
 @enduml

@@ -26,15 +26,13 @@ entity House {
 
 entity Device {
   * device_id : UUID <<PK>>
+  house_id : UUID <<FK>>
   --
   device_type : varchar
   status : varchar
-  house_id : varchar
-  created_by : UUID <<FK>>
 }
 
 User ||--o{ House : "has"
-User ||--o{ Device : "has"
 House ||--o{ Device : "has"
 
 @enduml
