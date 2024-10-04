@@ -17,6 +17,6 @@ func main() {
 	telemetryHandler := handlers.NewTelemetryHandler(repo)
 
 	http.HandleFunc("/telemetry", telemetryHandler.PostTelemetry)
-	log.Println("Starting server on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Starting server on :8081")
+	log.Fatal(http.ListenAndServe(":8081", nil))
 }

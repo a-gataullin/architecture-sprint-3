@@ -24,4 +24,4 @@ COPY --from=builder /app/telemetry-service /usr/local/bin/
 ENTRYPOINT ["/usr/local/bin/telemetry-service"]
 
 # Expose the port the service will run on
-EXPOSE 8080
+EXPOSE 8081
